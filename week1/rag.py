@@ -1,3 +1,14 @@
+"""Week 1 — RAG（Retrieval-Augmented Generation，檢索增強生成）
+
+中文導讀：
+- 目標：模型只能使用你提供的「Context」來回答；Context 來自本機的文件（這裡是簡化 API docs）。
+- 你要改的地方：
+    1) `YOUR_SYSTEM_PROMPT`：約束模型只能用 Context、輸出必須是單一 Python code block。
+    2) `YOUR_CONTEXT_PROVIDER`：從 CORPUS 挑出「真的相關」的文件片段（或全部提供）。
+- 測試方式：不比對整段文字，而是檢查生成 code 是否包含 REQUIRED_SNIPPETS。
+- 怎麼跑：`poetry run python week1/rag.py`
+"""
+
 import os
 import re
 from typing import List, Callable
@@ -11,6 +22,8 @@ NUM_RUNS_TIMES = 5
 DATA_FILES: List[str] = [
     os.path.join(os.path.dirname(__file__), "data", "api_docs.txt"),
 ]
+
+# 中文：這裡會嘗試讀 week1/data/api_docs.txt 當作知識庫；不存在時會在 CORPUS 中標記 missing。
 
 
 def load_corpus_from_files(paths: List[str]) -> List[str]:
@@ -56,6 +69,7 @@ def YOUR_CONTEXT_PROVIDER(corpus: List[str]) -> List[str]:
 
     For example, return [] to simulate missing context, or [corpus[0]] to include the API docs.
     """
+    # 中文：最簡單就是 `return [corpus[0]]`；進階可以做關鍵字搜尋/切段，只回傳需要的部分。
     return []
 
 
@@ -74,6 +88,9 @@ def make_user_prompt(question: str, context_docs: List[str]) -> str:
         "- Return only the user's name string.\n\n"
         "Output: A single fenced Python code block with the function and necessary imports.\n"
     )
+
+
+# 中文：為了穩定抓 code，測試會抽取「最後一段」```python ...``` code block。
 
 
 def extract_code_block(text: str) -> str:

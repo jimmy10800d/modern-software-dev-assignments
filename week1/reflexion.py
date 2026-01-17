@@ -1,3 +1,14 @@
+"""Week 1 — Reflexion（反思式改進）
+
+中文導讀：
+- 目標：讓模型先產生一版程式碼，跑測試得到失敗原因，再把「上一版程式碼 + 失敗訊息」回饋給模型，
+    讓模型自我修正產生 improved code。
+- 你要改的地方：
+    1) `YOUR_REFLEXION_PROMPT`：告訴模型如何根據失敗訊息修正，並且仍然只輸出單一 Python code block。
+    2) `your_build_reflexion_context`：把 prev_code 與 failures 組成清楚的回饋內容。
+- 怎麼跑：`poetry run python week1/reflexion.py`
+"""
+
 import os
 import re
 from typing import Callable, List, Tuple
@@ -7,6 +18,8 @@ from ollama import chat
 load_dotenv()
 
 NUM_RUNS_TIMES = 1
+
+# 中文：SYSTEM_PROMPT 固定要求模型只輸出 function code；你主要設計「反思 prompt」讓它修正錯誤。
 
 SYSTEM_PROMPT = """
 You are a coding assistant. Output ONLY a single fenced Python code block that defines
@@ -77,6 +90,9 @@ def evaluate_function(func: Callable[[str], bool]) -> Tuple[bool, List[str]]:
             )
 
     return (len(failures) == 0, failures)
+
+
+# 中文：第一次先生成初版程式，若測試失敗就進入 reflexion（單次迭代）。
 
 
 def generate_initial_function(system_prompt: str) -> str:

@@ -1,3 +1,18 @@
+"""Week 1 — Tool calling（工具呼叫 / function calling）
+
+中文導讀：
+- 目標：讓模型輸出「一個 JSON 物件」來描述要呼叫的工具（tool name + args），而不是直接回答。
+- 這個檔案會：
+    1) 讓模型產生 tool call JSON
+    2) 解析 JSON
+    3) 在本機執行對應的 Python function（TOOL_REGISTRY）
+    4) 比對執行結果是否等於 expected
+- 你要改的地方：只要填 `YOUR_SYSTEM_PROMPT`，讓模型穩定輸出合法 JSON。
+- 怎麼跑：`poetry run python week1/tool_calling.py`
+
+重點：模型輸出必須是「純 JSON」，不要加多餘文字；否則 `json.loads` 會解析失敗。
+"""
+
 import ast
 import json
 import os
@@ -14,6 +29,7 @@ NUM_RUNS_TIMES = 3
 # ==========================
 # Tool implementation (the "executor")
 # ==========================
+# 中文：下面這些函式是“真的會被執行”的工具；模型只負責輸出 JSON 指令，執行由本程式完成。
 def _annotation_to_str(annotation: Optional[ast.AST]) -> str:
     if annotation is None:
         return "None"
@@ -69,6 +85,12 @@ TOOL_REGISTRY: Dict[str, Callable[..., str]] = {
 # Prompt scaffolding
 # ==========================
 
+# 中文：你要讓模型輸出格式像這樣（範例）：
+# {
+#   "tool": "output_every_func_return_type",
+#   "args": {"file_path": "tool_calling.py"}
+# }
+
 # TODO: Fill this in!
 YOUR_SYSTEM_PROMPT = ""
 
@@ -92,6 +114,7 @@ def extract_tool_call(text: str) -> Dict[str, Any]:
         text = text.strip("`")
         if text.lower().startswith("json\n"):
             text = text[5:]
+    # 中文：最後一定要是單一 JSON 物件字串，否則 json.loads 會丟 JSONDecodeError。
     try:
         obj = json.loads(text)
         return obj

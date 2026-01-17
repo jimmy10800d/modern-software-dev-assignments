@@ -1,3 +1,12 @@
+"""Week 1 — Self-consistency prompting（自洽性／多次抽樣投票）
+
+中文導讀：
+- 目標：利用較高溫度讓模型產生多個不同推理路徑，最後用「多數決」提升正確率。
+- 你要改的地方：只要把 `YOUR_SYSTEM_PROMPT` 填好，讓每次輸出都遵守固定格式：最後一行 `Answer: <number>`。
+- 這個檔案會把每次的最終答案抽出來，再用 Counter 做 majority vote。
+- 怎麼跑：`poetry run python week1/self_consistency_prompting.py`
+"""
+
 import os
 import re
 from collections import Counter
@@ -7,6 +16,8 @@ from ollama import chat
 load_dotenv()
 
 NUM_RUNS_TIMES = 5
+
+# 中文：system prompt 會影響「輸出格式是否穩定」；格式不穩定會導致抽答案失敗或投票偏移。
 
 # TODO: Fill this in! Try to get as close to 100% correctness across all runs as possible.
 YOUR_SYSTEM_PROMPT = ""
@@ -44,6 +55,7 @@ def test_your_prompt(system_prompt: str) -> bool:
 
     Prints "SUCCESS" if the majority answer equals EXPECTED_OUTPUT.
     """
+    # 中文：answers 會收集每次抽到的 Answer: ...，最後選最多票的。
     answers: list[str] = []
     for idx in range(NUM_RUNS_TIMES):
         print(f"Running test {idx + 1} of {NUM_RUNS_TIMES}")

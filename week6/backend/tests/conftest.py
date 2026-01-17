@@ -1,6 +1,25 @@
 import os
+import sys
 import tempfile
 from collections.abc import Generator
+
+from pathlib import Path
+
+# Ensure `import backend...` resolves to THIS week's backend package even when running from repo root.
+# week6/backend/tests/conftest.py -> parents[2] is week6/
+_WEEK_DIR = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(_WEEK_DIR))
+
+_THIS_CONFTEST = Path(__file__).resolve()
+for _name, _mod in list(sys.modules.items()):
+    if not (_name == "backend" or _name.startswith("backend.")):
+        continue
+    _mod_file = getattr(_mod, "__file__", None)
+    if _mod_file and Path(_mod_file).resolve() == _THIS_CONFTEST:
+        continue
+    if _name.endswith(".tests.conftest"):
+        continue
+    del sys.modules[_name]
 
 import pytest
 from backend.app.db import get_db
@@ -33,9 +52,12 @@ def client() -> Generator[TestClient, None, None]:
 
     app.dependency_overrides[get_db] = override_get_db
 
-    with TestClient(app) as c:
-        yield c
-
-    os.unlink(db_path)
+    try:
+        with TestClient(app) as c:
+            yield c
+    finally:
+        app.dependency_overrides.clear()
+        engine.dispose()
+        os.unlink(db_path)
 
 

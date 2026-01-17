@@ -1,3 +1,14 @@
+"""Week 1 — K-shot prompting（K-shot 提示）
+
+中文導讀：
+- 目標：只透過「系統提示詞（system prompt）」讓模型穩定完成指定任務。
+- 你要改的地方：把下方 `YOUR_SYSTEM_PROMPT` 填好（通常會放 few-shot 範例與格式約束）。
+- 建議做法：在 system prompt 裡明確規定「只能輸出答案本身、不要多餘文字」。
+- 怎麼跑：在專案根目錄執行 `poetry run python week1/k_shot_prompting.py`。
+
+評分方式（此檔）：模型輸出必須只包含反轉後的字串，且完全符合 EXPECTED_OUTPUT。
+"""
+
 import os
 from dotenv import load_dotenv
 from ollama import chat
@@ -5,6 +16,8 @@ from ollama import chat
 load_dotenv()
 
 NUM_RUNS_TIMES = 5
+
+# 中文：本作業通常只需要你修改 system prompt（不要隨便調 model/temperature）。
 
 # TODO: Fill this in!
 YOUR_SYSTEM_PROMPT = ""
@@ -17,6 +30,9 @@ httpstatus
 
 
 EXPECTED_OUTPUT = "sutatsptth"
+
+
+# 中文：會重跑多次，只要任一次輸出完全吻合就算成功。
 
 def test_your_prompt(system_prompt: str) -> bool:
     """Run the prompt up to NUM_RUNS_TIMES and return True if any output matches EXPECTED_OUTPUT.
