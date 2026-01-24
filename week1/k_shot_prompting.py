@@ -9,7 +9,6 @@
 評分方式（此檔）：模型輸出必須只包含反轉後的字串，且完全符合 EXPECTED_OUTPUT。
 """
 
-import os
 from dotenv import load_dotenv
 from ollama import chat
 
@@ -20,7 +19,34 @@ NUM_RUNS_TIMES = 5
 # 中文：本作業通常只需要你修改 system prompt（不要隨便調 model/temperature）。
 
 # TODO: Fill this in!
-YOUR_SYSTEM_PROMPT = "你是一個能夠反轉字母順序的助手。請根據使用者提供的單字，回傳該單字的反轉版本。請只輸出反轉後的單字，不要包含任何其他文字或說明。"
+YOUR_SYSTEM_PROMPT = """You are a deterministic string transformer.
+
+Task:
+- Read the user's message.
+- Find the LAST non-empty line.
+- Reverse that line CHARACTER-BY-CHARACTER (do not split into words).
+
+Output rules (strict):
+- Output ONLY the reversed string.
+- No extra words, no punctuation, no quotes, no explanations.
+- Preserve characters exactly (case, digits, punctuation). Do not add/remove characters.
+
+Examples:
+Input:
+abc
+Output:
+cba
+
+Input:
+httpstatus
+Output:
+sutatsptth
+
+Input:
+A1-b_
+Output:
+_b-1A
+"""
 
 USER_PROMPT = "the following is a few-shot example to illustrate the task:\n\nReverse the order of letters in the following word. Only output the reversed word, no other text:\n\nhttpstatus"
 
