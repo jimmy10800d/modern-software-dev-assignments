@@ -20,13 +20,10 @@ NUM_RUNS_TIMES = 5
 # 中文：本作業通常只需要你修改 system prompt（不要隨便調 model/temperature）。
 
 # TODO: Fill this in!
-YOUR_SYSTEM_PROMPT = ""
+YOUR_SYSTEM_PROMPT = "你是一個能夠反轉字母順序的助手。請根據使用者提供的單字，回傳該單字的反轉版本。請只輸出反轉後的單字，不要包含任何其他文字或說明。"
 
-USER_PROMPT = """
-Reverse the order of letters in the following word. Only output the reversed word, no other text:
+USER_PROMPT = "the following is a few-shot example to illustrate the task:\n\nReverse the order of letters in the following word. Only output the reversed word, no other text:\n\nhttpstatus"
 
-httpstatus
-"""
 
 
 EXPECTED_OUTPUT = "sutatsptth"
