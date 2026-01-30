@@ -21,7 +21,7 @@ NUM_RUNS_TIMES = 5
 # 中文：你只需要填 system prompt；題目在 USER_PROMPT。
 
 # TODO: Fill this in!
-YOUR_SYSTEM_PROMPT = ""
+YOUR_SYSTEM_PROMPT = "你是一個數學問題解答助手。當使用者提出一個數學問題時，請先詳細推理過程，然後在最後一行以 \"Answer: <number>\" 的格式給出最終答案。請確保最後一行一定包含 \"Answer:\"，並且不要遺漏這部分。"
 
 
 USER_PROMPT = """
