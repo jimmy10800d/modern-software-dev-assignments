@@ -78,6 +78,7 @@ ollama run llama3.1:8b
 
 ---
 
+<<<<<<< HEAD
 ## 中文註解（詳細版）
 本週主題：練習 6 種提示工程技巧。每個技巧都有對應的 Python 檔案，**你只需補齊 TODO 的 prompt**，不要改模型或參數，便於評分。
 
@@ -110,3 +111,31 @@ ollama run llama3.1:8b
 
 ### 評分
 - 6 個技巧各 10 分，合計 60 分。
+=======
+## 作業流程（Mermaid）
+
+```mermaid
+flowchart TD
+  A[開始：Week 1 Prompting Techniques] --> B[完成專案根目錄 README 的安裝步驟<br/>（Python/Poetry/依賴）]
+  B --> C[安裝 Ollama 並確認可用<br/>ollama -v]
+  C --> D[拉取必要模型（只需一次）<br/>mistral-nemo:12b、llama3.1:8b]
+
+  D --> E[依序完成 6 個技巧的腳本（只改 TODO 的 prompt）]
+
+  subgraph S[6 種 Prompting 技巧]
+    S1[K-shot prompting<br/>week1/k_shot_prompting.py]
+    S2[Chain-of-thought<br/>week1/chain_of_thought.py]
+    S3[Tool calling<br/>week1/tool_calling.py]
+    S4[Self-consistency prompting<br/>week1/self_consistency_prompting.py]
+    S5[RAG<br/>week1/rag.py]
+    S6[Reflexion<br/>week1/reflexion.py]
+  end
+
+  E --> S
+  S --> F[反覆調整 prompt 直到測試通過<br/>（避免更動模型/溫度等參數）]
+  F --> G[保存每個技巧的最終 prompt 與輸出]
+  G --> H[提交：6 個檔案的完成版程式碼<br/>確認所有 TODO 都已解決]
+  H --> I[評分：60 分<br/>每個技巧 10 分]
+  I --> J[完成]
+```
+>>>>>>> 96a9c83a959e1c030db4429856095dba89481345
