@@ -2,6 +2,13 @@
 
 Use the app in `week5/` as your playground. This week mirrors the prior assignment but emphasizes the Warp agentic development environment and multi‑agent workflows.
 
+## 中文註解（本週重點）
+- 目標：在 week5/ 用 Warp 的 Agentic 能力完成任務與自動化。
+- 必做：
+   - 建立至少一個 Warp Drive（saved prompt/rule/MCP）
+   - 至少一次多代理（multi‑agent）並行工作流程
+- 交付：writeup.md 說明自動化設計、使用方式與改善點。
+
 ## Learn about Warp
 - Warp Agentic Development Environment: [warp.dev](https://www.warp.dev/)
 - [Warp University](https://www.warp.dev/university?slug=university)
@@ -115,4 +122,34 @@ Work strictly in `week5/` (backend, frontend, logic, tests). Avoid changing othe
 1. Make sure you have all changes pushed to your remote repository for grading.
 2. **Make sure you've added both brentju and febielin as collaborators on your assignment repository.**
 2. Submit via Gradescope. 
+
+---
+
+## 中文註解（詳細版）
+### 本週目標
+在 week5/ 專案中使用 Warp 的 Agentic 開發能力完成任務，並建立至少 2 個自動化流程。
+
+### 必要條件
+- **Warp Drive**：至少一個 saved prompt / rule / MCP integration。
+- **Multi‑agent**：至少一次多代理協作並行作業。
+
+### 操作與啟動
+- 進入 `week5/`。
+- `make run` 啟動應用。
+- `make test` 跑測試。
+- `make format` / `make lint` 格式化與檢查。
+
+### Part I：自動化與任務
+- 從 `week5/docs/TASKS.md` 選任務完成。
+- 每個任務需記錄難度與使用的 Warp 自動化方式。
+
+### Part II：回饋寫作
+- 在 writeup.md 說明自動化設計、輸入輸出、步驟與改善點。
+
+### 範圍限制
+- 只修改 `week5/` 內的後端/前端/測試/文件。
+
+### 交付
+- 交付自動化內容與 writeup.md 記錄。
+- 推送遠端、加指定協作者、Gradescope 繳交。
 

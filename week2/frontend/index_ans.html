@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<!-- TODO 4 解答：更新前端，新增 Extract LLM 與 List Notes 按鈕 -->
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <!-- 行動裝置縮放設定 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Action Item Extractor</title>
+    <style>
+        /* ============================================ */
+        /* 基礎樣式 */
+        /* ============================================ */
+        
+        /* 全域字型與排版 */
+        body {
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif;
+            margin: 2rem auto;
+            max-width: 900px;
+            padding: 0 1rem;
+            background-color: #f9fafb;
+            color: #1f2937;
+        }
+        
+        /* 主標題樣式 */
+        h1 {
+            font-size: 1.75rem;
+            color: #111827;
+            margin-bottom: 0.5rem;
+        }
+        
+        /* 副標題樣式 */
+        h2 {
+            font-size: 1.25rem;
+            color: #374151;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 0.5rem;
+        }
+        
+        /* ============================================ */
+        /* 表單元素樣式 */
+        /* ============================================ */
+        
+        /* 輸入框樣式 */
+        textarea {
+            width: 100%;
+            min-height: 180px;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, monospace;
+            font-size: 0.875rem;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            resize: vertical;
+            box-sizing: border-box;
+        }
+        
+        /* 輸入框 focus 狀態 */
+        textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        /* 標籤樣式 */
+        label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: #374151;
+        }
+        
+        /* ============================================ */
+        /* 按鈕樣式 */
+        /* ============================================ */
+        
+        /* 基礎按鈕 */
+        button {
+            padding: 0.625rem 1.25rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            border: none;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        
+        /* 主要按鈕（藍色） */
+        .btn-primary {
+            background-color: #3b82f6;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #2563eb;
+        }
+        
+        .btn-primary:disabled {
+            background-color: #93c5fd;
+            cursor: not-allowed;
+        }
+        
+        /* 次要按鈕（綠色，用於 LLM） */
+        .btn-secondary {
+            background-color: #10b981;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #059669;
+        }
+        
+        .btn-secondary:disabled {
+            background-color: #6ee7b7;
+            cursor: not-allowed;
+        }
+        
+        /* 輔助按鈕（灰色） */
+        .btn-outline {
+            background-color: white;
+            color: #374151;
+            border: 1px solid #d1d5db;
+        }
+        
+        .btn-outline:hover {
+            background-color: #f3f4f6;
+        }
+        
+        /* ============================================ */
+        /* 容器與排版 */
+        /* ============================================ */
+        
+        /* 橫向排列容器 */
+        .row {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        /* 勾選框標籤 */
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+        
+        /* 卡片容器 */
+        .card {
+            background-color: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+        
+        /* ============================================ */
+        /* 結果顯示區域 */
+        /* ============================================ */
+        
+        /* 項目容器 */
+        .items {
+            margin-top: 1rem;
+        }
+        
+        /* 單一項目 */
+        .item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.625rem 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        
+        .item:last-child {
+            border-bottom: none;
+        }
+        
+        /* 項目勾選框 */
+        .item input[type="checkbox"] {
+            width: 1.25rem;
+            height: 1.25rem;
+            cursor: pointer;
+        }
+        
+        /* 項目文字 */
+        .item span {
+            flex: 1;
+            color: #1f2937;
+        }
+        
+        /* 已完成項目 */
+        .item.done span {
+            text-decoration: line-through;
+            color: #9ca3af;
+        }
+        
+        /* 淡色說明文字 */
+        .muted {
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+        
+        /* ============================================ */
+        /* 筆記列表樣式 */
+        /* ============================================ */
+        
+        /* 筆記項目 */
+        .note-item {
+            padding: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .note-item:last-child {
+            border-bottom: none;
+        }
+        
+        /* 筆記內容 */
+        .note-content {
+            font-size: 0.875rem;
+            color: #374151;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        
+        /* 筆記時間 */
+        .note-time {
+            font-size: 0.75rem;
+            color: #9ca3af;
+            margin-top: 0.5rem;
+        }
+        
+        /* ============================================ */
+        /* 狀態指示器 */
+        /* ============================================ */
+        
+        /* 方法標籤 */
+        .method-badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+            border-radius: 9999px;
+            font-weight: 500;
+        }
+        
+        .method-badge.heuristic {
+            background-color: #e0e7ff;
+            color: #3730a3;
+        }
+        
+        .method-badge.llm {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+        
+        /* 載入中指示器 */
+        .loading {
+            display: inline-block;
+            width: 1rem;
+            height: 1rem;
+            border: 2px solid #e5e7eb;
+            border-top-color: #3b82f6;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* ============================================ */
+        /* 統計資訊 */
+        /* ============================================ */
+        
+        .stats {
+            display: flex;
+            gap: 2rem;
+            padding: 1rem;
+            background-color: #f3f4f6;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #111827;
+        }
+        
+        .stat-label {
+            font-size: 0.75rem;
+            color: #6b7280;
+        }
+    </style>
+</head>
+<body>
+    <!-- 頁面標題 -->
+    <h1>🎯 Action Item Extractor</h1>
+    <p class="muted">Paste notes and extract actionable items using heuristics or AI.</p>
+
+    <!-- 統計資訊區域 -->
+    <div class="stats" id="stats">
+        <div class="stat-item">
+            <div class="stat-value" id="stat-notes">-</div>
+            <div class="stat-label">Notes</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value" id="stat-items">-</div>
+            <div class="stat-label">Action Items</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value" id="stat-done">-</div>
+            <div class="stat-label">Completed</div>
+        </div>
+    </div>
+
+    <!-- 輸入區域 -->
+    <div class="card">
+        <label for="text">📝 Notes</label>
+        <textarea 
+            id="text" 
+            placeholder="Paste your notes here...&#10;&#10;Examples:&#10;- [ ] Set up database&#10;- Implement extract endpoint&#10;TODO: Write unit tests&#10;ACTION: Review pull request"
+        ></textarea>
+        
+        <!-- 按鈕列 -->
+        <div class="row">
+            <label class="checkbox-label">
+                <input id="save_note" type="checkbox" checked />
+                Save as note
+            </label>
+            
+            <!-- 啟發式抽取按鈕 -->
+            <button id="extract" class="btn-primary">
+                🔍 Extract (Heuristic)
+            </button>
+            
+            <!-- TODO 4: LLM 抽取按鈕 -->
+            <button id="extract-llm" class="btn-secondary">
+                🤖 Extract (LLM)
+            </button>
+            
+            <!-- TODO 4: 列出所有筆記按鈕 -->
+            <button id="list-notes" class="btn-outline">
+                📋 List Notes
+            </button>
+        </div>
+    </div>
+
+    <!-- 抽取結果區域 -->
+    <h2>✅ Action Items</h2>
+    <div class="card">
+        <div class="items" id="items">
+            <p class="muted">No action items yet. Paste some notes and click Extract.</p>
+        </div>
+    </div>
+
+    <!-- 筆記列表區域 -->
+    <h2>📝 Saved Notes</h2>
+    <div class="card">
+        <div id="notes-list">
+            <p class="muted">Click "List Notes" to view saved notes.</p>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // DOM 元素選擇器
+        // ============================================
+        
+        const $ = (sel) => document.querySelector(sel);  // 簡化選擇器
+        const itemsEl = $('#items');  // 結果容器
+        const notesListEl = $('#notes-list');  // 筆記列表容器
+        const extractBtn = $('#extract');  // 啟發式抽取按鈕
+        const extractLLMBtn = $('#extract-llm');  // LLM 抽取按鈕
+        const listNotesBtn = $('#list-notes');  // 列出筆記按鈕
+        
+        // ============================================
+        // 輔助函式
+        // ============================================
+        
+        // 載入統計資訊
+        async function loadStats() {
+            try {
+                const res = await fetch('/stats');
+                if (res.ok) {
+                    const data = await res.json();
+                    $('#stat-notes').textContent = data.notes_count || 0;
+                    $('#stat-items').textContent = data.action_items_count || 0;
+                    $('#stat-done').textContent = data.completed_items_count || 0;
+                }
+            } catch (err) {
+                console.log('Stats not available');
+            }
+        }
+        
+        // 顯示載入中狀態
+        function showLoading(el, message = 'Loading...') {
+            el.innerHTML = `<div class="loading"></div> ${message}`;
+        }
+        
+        // 顯示錯誤訊息
+        function showError(el, message) {
+            el.innerHTML = `<p class="muted" style="color: #dc2626;">${message}</p>`;
+        }
+        
+        // 渲染行動項目
+        function renderItems(data) {
+            if (!data.items || data.items.length === 0) {
+                itemsEl.innerHTML = '<p class="muted">No action items found.</p>';
+                return;
+            }
+            
+            // 顯示使用的方法
+            const methodBadge = data.method === 'llm' 
+                ? '<span class="method-badge llm">LLM</span>'
+                : '<span class="method-badge heuristic">Heuristic</span>';
+            
+            itemsEl.innerHTML = `
+                <div style="margin-bottom: 0.5rem;">
+                    ${methodBadge}
+                    <span class="muted" style="margin-left: 0.5rem;">Found ${data.items.length} items</span>
+                </div>
+                ${data.items.map(it => `
+                    <div class="item">
+                        <input type="checkbox" data-id="${it.id}" />
+                        <span>${escapeHtml(it.text)}</span>
+                    </div>
+                `).join('')}
+            `;
+            
+            // 綁定勾選事件
+            itemsEl.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+                cb.addEventListener('change', async (e) => {
+                    const id = e.target.getAttribute('data-id');
+                    const item = e.target.closest('.item');
+                    
+                    await fetch(`/action-items/${id}/done`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ done: e.target.checked })
+                    });
+                    
+                    // 更新樣式
+                    item.classList.toggle('done', e.target.checked);
+                    loadStats();  // 更新統計
+                });
+            });
+        }
+        
+        // HTML 跳脫
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        // ============================================
+        // 事件處理
+        // ============================================
+        
+        // 啟發式抽取
+        extractBtn.addEventListener('click', async () => {
+            const text = $('#text').value;
+            const save = $('#save_note').checked;
+            
+            if (!text.trim()) {
+                showError(itemsEl, 'Please enter some notes first.');
+                return;
+            }
+            
+            extractBtn.disabled = true;
+            showLoading(itemsEl, 'Extracting...');
+            
+            try {
+                const res = await fetch('/action-items/extract', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text, save_note: save })
+                });
+                
+                if (!res.ok) throw new Error('Request failed');
+                
+                const data = await res.json();
+                data.method = 'heuristic';  // 標記方法
+                renderItems(data);
+                loadStats();
+                
+            } catch (err) {
+                console.error(err);
+                showError(itemsEl, 'Error extracting items. Please try again.');
+            } finally {
+                extractBtn.disabled = false;
+            }
+        });
+        
+        // TODO 4: LLM 抽取
+        extractLLMBtn.addEventListener('click', async () => {
+            const text = $('#text').value;
+            const save = $('#save_note').checked;
+            
+            if (!text.trim()) {
+                showError(itemsEl, 'Please enter some notes first.');
+                return;
+            }
+            
+            extractLLMBtn.disabled = true;
+            showLoading(itemsEl, 'Extracting with LLM (this may take a moment)...');
+            
+            try {
+                const res = await fetch('/action-items/extract-llm', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text, save_note: save })
+                });
+                
+                if (!res.ok) {
+                    const errorData = await res.json().catch(() => ({}));
+                    throw new Error(errorData.detail || 'Request failed');
+                }
+                
+                const data = await res.json();
+                renderItems(data);
+                loadStats();
+                
+            } catch (err) {
+                console.error(err);
+                showError(itemsEl, `Error: ${err.message || 'LLM extraction failed. Make sure Ollama is running.'}`);
+            } finally {
+                extractLLMBtn.disabled = false;
+            }
+        });
+        
+        // TODO 4: 列出所有筆記
+        listNotesBtn.addEventListener('click', async () => {
+            listNotesBtn.disabled = true;
+            showLoading(notesListEl, 'Loading notes...');
+            
+            try {
+                const res = await fetch('/notes');
+                
+                if (!res.ok) throw new Error('Request failed');
+                
+                const data = await res.json();
+                const notes = data.notes || data;  // 相容兩種格式
+                
+                if (!notes || notes.length === 0) {
+                    notesListEl.innerHTML = '<p class="muted">No notes found. Save some notes first!</p>';
+                    return;
+                }
+                
+                notesListEl.innerHTML = notes.map(note => `
+                    <div class="note-item">
+                        <div class="note-content">${escapeHtml(note.content)}</div>
+                        <div class="note-time">ID: ${note.id} | Created: ${note.created_at}</div>
+                    </div>
+                `).join('');
+                
+            } catch (err) {
+                console.error(err);
+                showError(notesListEl, 'Error loading notes. Please try again.');
+            } finally {
+                listNotesBtn.disabled = false;
+            }
+        });
+        
+        // ============================================
+        // 初始化
+        // ============================================
+        
+        // 頁面載入時載入統計
+        loadStats();
+    </script>
+</body>
+</html>

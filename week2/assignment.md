@@ -5,6 +5,11 @@
 
 This week, we will be expanding upon a minimal FastAPI + SQLite app that converts free‑form notes into enumerated action items.
 
+## 中文註解（本週重點）
+- 目標：擴充既有 FastAPI + SQLite 筆記→行動項目（action items）應用。
+- 你要做的事：在後端加入 LLM 抽取、補測試、重構、加端點與前端按鈕、並產出 README。
+- 交付：完成程式修改並在 writeup.md 記錄你用的提示與變更。
+
 ***We recommend reading this entire document before getting started.***
 
 > 中文註解：
@@ -141,6 +146,41 @@ Fill out `week2/writeup.md` according to the instructions provided. Make sure al
 ## Evaluation rubric (100 pts total)
 - 20 points per part 1-5 (10 for the generated code and 10 for each prompt).
 
+<<<<<<< HEAD
+---
+
+## 中文註解（詳細版）
+### 本週目標
+以現有 FastAPI + SQLite 應用為基礎，擴充「從自由文字筆記萃取行動項目」的功能，並練習 LLM + 測試 + 重構 + 前後端整合。
+
+### 起始設定與啟動
+1. 啟用 conda 環境：`conda activate cs146s`
+2. 啟動伺服器：`poetry run uvicorn week2.app.main:app --reload`
+3. 瀏覽器開啟 `http://127.0.0.1:8000/`
+4. 先熟悉目前功能（輸入筆記 → 產生 checklist）
+
+### TODO 任務說明
+1) **加入 LLM 抽取**：
+	- 研讀 `extract_action_items()`（啟發式抽取）。
+	- 新增 `extract_action_items_llm()` 使用 Ollama 模型輸出結構化 JSON（字串陣列）。
+
+2) **新增測試**：
+	- 在 `week2/tests/test_extract.py` 補 LLM 抽取的單元測試（多種輸入型態）。
+
+3) **重構後端**：
+	- 改善 API schema/contract、資料庫層、生命週期設定、錯誤處理等。
+
+4) **Agentic 自動化小任務**：
+	- 新增 LLM 抽取端點與前端按鈕「Extract LLM」。
+	- 新增「列出所有 notes」端點與前端按鈕「List Notes」。
+
+5) **產生 README**：
+	- 讓 AI 讀程式碼自動生成 README：專案概述、安裝/執行、API 端點、測試指令。
+
+### 交付與評分
+- `week2/writeup.md` 需記錄你的提示與變更。
+- 每個 TODO 20 分（10 分程式 + 10 分 prompt）。
+=======
 > 中文註解：
 > 每題 20 分：其中 10 分看「程式碼/成果」，另 10 分看「提示詞與使用 AI 的過程記錄」。
 
@@ -178,3 +218,4 @@ flowchart TD
 	I --> J["評分：總分 100 分<br/>每個 TODO 20 分（10 分程式碼 + 10 分 prompts）"]
 	J --> K[完成]
 ```
+>>>>>>> 96a9c83a959e1c030db4429856095dba89481345

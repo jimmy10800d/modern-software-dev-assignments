@@ -4,6 +4,11 @@ Design and implement a Model Context Protocol (MCP) server that wraps a real ext
 - Run it **locally** (STDIO transport) and integrate with an MCP client (like Claude Desktop).
 - Or run it **remotely** (HTTP transport) and call it from a model agent or client. This is harder but earns extra credit.
 
+## 中文註解（本週重點）
+- 目標：做一個 MCP Server，包裝真實外部 API。
+- 核心要求：至少 2 個工具、完善錯誤處理、基本 rate limit 考量、清楚文件與執行方式。
+- 交付：程式碼放 week3/，並提供 week3/README.md 說明設定、執行與工具使用範例。
+
 Bonus points for adding authentication (API keys or OAuth2) aligned with the MCP Authorization spec.
 
 ## Learning goals
@@ -50,3 +55,34 @@ Bonus points for adding authentication (API keys or OAuth2) aligned with the MCP
 - MCP Authorization (HTTP): [modelcontextprotocol.io/specification/2025-06-18/basic/authorization](https://modelcontextprotocol.io/specification/2025-06-18/basic/authorization)
 - Remote MCP on Cloudflare (Agents): [developers.cloudflare.com/agents/guides/remote-mcp-server/](https://developers.cloudflare.com/agents/guides/remote-mcp-server/). Use the modelcontextprotocol inspector tool to debug your server locally before deploying.
 - https://vercel.com/docs/mcp/deploy-mcp-servers-to-vercel If you choose to do a remote MCP deployment, Vercel is a good option with a free tier. 
+
+---
+
+## 中文註解（詳細版）
+### 本週目標
+設計並實作一個 MCP Server，用來包裝真實的外部 API。可選本機 STDIO 或遠端 HTTP，遠端與驗證為加分項。
+
+### 必備能力
+- MCP 基本概念：tools / resources / prompts。
+- 實作工具定義、型別參數與錯誤處理。
+- 日誌與傳輸模式注意事項（STDIO 不寫 stdout）。
+
+### 需求摘要
+1. 選定一個外部 API，清楚列出使用的 endpoint。
+2. 至少提供 2 個 MCP 工具。
+3. 基本可靠性：錯誤處理、timeout、空結果、rate limit 提示或退避。
+4. 文件完整：安裝、環境變數、執行方式與範例。
+5. 選擇部署方式：
+    - 本機 STDIO；或
+    - 遠端 HTTP（加分）。
+6. 加分：API key 或 OAuth2 驗證。
+
+### 交付內容
+- `week3/` 下的程式碼（可自建 `week3/server/`）。
+- `week3/README.md`：
+   - 環境與執行方式
+   - MCP client 設定說明
+   - 工具名稱/參數/範例
+
+### 評分
+- 功能、可靠性、文件體驗、程式品質，各有配分；遠端與驗證加分。
