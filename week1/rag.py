@@ -50,7 +50,7 @@ QUESTION = (
 
 
 # TODO: Fill this in!
-YOUR_SYSTEM_PROMPT = ""
+YOUR_SYSTEM_PROMPT = "你是一個只能使用提供的 Context 來回答問題的助手。請確保你的回答只包含一個 Python 程式碼區塊，且不包含其他文字。"
 
 
 # For this simple example
@@ -70,7 +70,7 @@ def YOUR_CONTEXT_PROVIDER(corpus: List[str]) -> List[str]:
     For example, return [] to simulate missing context, or [corpus[0]] to include the API docs.
     """
     # 中文：最簡單就是 `return [corpus[0]]`；進階可以做關鍵字搜尋/切段，只回傳需要的部分。
-    return []
+    return [corpus[0]]
 
 
 def make_user_prompt(question: str, context_docs: List[str]) -> str:
