@@ -7,12 +7,6 @@
 """- 怎麼跑：在專案根目錄執行 `poetry run python week1/k_shot_prompting.py`。"""  # 執行方式
 """評分方式（此檔）：模型輸出必須只包含反轉後的字串，且完全符合 EXPECTED_OUTPUT。"""  # 評分方式
 
-<<<<<<< HEAD
-# 匯入 os 模組
-import os
-# 匯入 dotenv 的 load_dotenv
-=======
->>>>>>> 96a9c83a959e1c030db4429856095dba89481345
 from dotenv import load_dotenv
 # 匯入 ollama 的 chat
 from ollama import chat
@@ -25,22 +19,13 @@ NUM_RUNS_TIMES = 5
 
 # 中文：本作業通常只需要你修改 system prompt（不要隨便調 model/temperature）。
 
-<<<<<<< HEAD
 # TODO: Fill this in!（填入你的 system prompt）
-YOUR_SYSTEM_PROMPT = ""
-
-# 使用者提示：反轉字串
-USER_PROMPT = """
-Reverse the order of letters in the following word. Only output the reversed word, no other text:
-=======
-# TODO: Fill this in!
 YOUR_SYSTEM_PROMPT = """You are a deterministic string transformer.
 
 Task:
 - Read the user's message.
 - Find the LAST non-empty line.
 - Reverse that line CHARACTER-BY-CHARACTER (do not split into words).
->>>>>>> 96a9c83a959e1c030db4429856095dba89481345
 
 Output rules (strict):
 - Output ONLY the reversed string.
@@ -64,14 +49,10 @@ Output:
 _b-1A
 """
 
-<<<<<<< HEAD
+# 使用者提示：反轉字串
+USER_PROMPT = "Reverse the order of letters in the following word. Only output the reversed word, no other text:\n\nhttpstatus"
+
 # 期望輸出
-=======
-USER_PROMPT = "the following is a few-shot example to illustrate the task:\n\nReverse the order of letters in the following word. Only output the reversed word, no other text:\n\nhttpstatus"
-
-
-
->>>>>>> 96a9c83a959e1c030db4429856095dba89481345
 EXPECTED_OUTPUT = "sutatsptth"
 
 # 中文：會重跑多次，只要任一次輸出完全吻合就算成功。
