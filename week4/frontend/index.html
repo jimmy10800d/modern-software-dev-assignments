@@ -1,35 +1,35 @@
-<!doctype html>
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Modern Software Dev Starter</title>
-    <link rel="stylesheet" href="/static/styles.css" />
-  </head>
-  <body>
-    <main>
-      <h1>Modern Software Dev Starter</h1>
+<!doctype html> <!-- 文件型別 -->
+<html> <!-- HTML 根節點 -->
+  <head> <!-- 文件頭 -->
+    <meta charset="utf-8" /> <!-- 字元編碼 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" /> <!-- 行動裝置設定 -->
+    <title>Modern Software Dev Starter</title> <!-- 標題 -->
+    <link rel="stylesheet" href="/static/styles.css" /> <!-- 載入樣式 -->
+  </head> <!-- 結束 head -->
+  <body> <!-- 內容區 -->
+    <main> <!-- 主內容 -->
+      <h1>Modern Software Dev Starter</h1> <!-- 主標題 -->
 
-      <section>
-        <h2>Notes</h2>
-        <form id="note-form">
-          <input id="note-title" placeholder="Title" required />
-          <input id="note-content" placeholder="Content" required />
-          <button type="submit">Add</button>
-        </form>
-        <ul id="notes"></ul>
-      </section>
+      <section> <!-- 筆記區塊 -->
+        <h2>Notes</h2> <!-- 區塊標題 -->
+        <form id="note-form"> <!-- 筆記表單 -->
+          <input id="note-title" placeholder="Title" required /> <!-- 標題輸入 -->
+          <input id="note-content" placeholder="Content" required /> <!-- 內容輸入 -->
+          <button type="submit">Add</button> <!-- 送出按鈕 -->
+        </form> <!-- 結束表單 -->
+        <ul id="notes"></ul> <!-- 筆記清單 -->
+      </section> <!-- 結束筆記區塊 -->
 
-      <section>
-        <h2>Action Items</h2>
-        <form id="action-form">
-          <input id="action-desc" placeholder="Description" required />
-          <button type="submit">Add</button>
-        </form>
-        <ul id="actions"></ul>
-      </section>
-    </main>
+      <section> <!-- 行動項目區塊 -->
+        <h2>Action Items</h2> <!-- 區塊標題 -->
+        <form id="action-form"> <!-- 行動項目表單 -->
+          <input id="action-desc" placeholder="Description" required /> <!-- 描述輸入 -->
+          <button type="submit">Add</button> <!-- 送出按鈕 -->
+        </form> <!-- 結束表單 -->
+        <ul id="actions"></ul> <!-- 行動項目清單 -->
+      </section> <!-- 結束行動項目區塊 -->
+    </main> <!-- 結束主內容 -->
 
-    <script src="/static/app.js"></script>
-  </body>
-</html>
+    <script src="/static/app.js"></script> <!-- 載入 JS -->
+  </body> <!-- 結束 body -->
+</html> <!-- 結束 HTML -->

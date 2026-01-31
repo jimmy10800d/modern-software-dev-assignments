@@ -3,6 +3,14 @@
 ## Demo Day Confirmation
 Please navigate to this [form](https://forms.gle/J3R3PSRqnFAJxhjG8) for details about our class demo day.
 
+## 中文註解（本週重點）
+- 目標：用 3 種不同技術棧做同一個完整 Web App。
+- 必做條件：
+   - 至少一個版本用 bolt.new
+   - 至少一個版本的前端或後端使用非 JavaScript 語言
+   - 每個版本有 README 與可執行說明
+- 交付：week8/ 下 3 個專案資料夾 + writeup.md 描述三個版本。
+
 
 ## Assignment Overview
 Build the same functional web application in 3 distinct technology stacks. At least one version must be created using [`bolt.new`](https://bolt.new/), an AI app generation platform. At least one version must use a non-JavaScript language for either the frontend or backend (e.g., Django, Ruby on Rails).
@@ -69,4 +77,31 @@ Bolt is an AI-assisted development platform that generates websites, web apps, a
    - README.md: prerequisites, installation/set-up instructions, run, and env configuration (5 pts)
    - App functionality (5 pts)
    - Complete version description detailed in `writeup.md` (5 pts)
+
+---
+
+## 中文註解（詳細版）
+### 本週目標
+用 3 種不同技術棧實作同一個完整 Web App。至少一版用 bolt.new，且至少一版前端或後端為非 JavaScript。
+
+### 最小功能範圍
+- 主要資源具備 CRUD。
+- 有持久化（DB 或檔案）。
+- 基本驗證與錯誤處理。
+- 可用 UI。
+- 每個版本有清楚的執行說明。
+
+### 技術棧要求
+- 3 個版本彼此不同。
+- 至少 1 個版本使用非 JS 語言（如 Django / Rails）。
+- 至少 1 個版本使用 bolt.new 生成。
+
+### 交付內容
+- week8/ 下 3 個專案資料夾（各自含 README）。
+- writeup.md：App 概念 + 三個版本說明。
+
+### 評分重點
+- 符合最低功能範圍。
+- 技術棧差異與要求達成。
+- 每個版本的 README 與功能完整度。
 

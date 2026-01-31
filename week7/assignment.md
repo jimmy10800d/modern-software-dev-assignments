@@ -3,6 +3,11 @@
 ## Assignment Overview
 In this assignment, you will practice agent-driven development and AI-assisted code review on a more advanced codebase. You will implement the tasks in `week7/docs/TASKS.md`, validate your work with tests and manual review, and compare your own review notes with AI-generated code reviews.
 
+## 中文註解（本週重點）
+- 目標：完成 week7/docs/TASKS.md 的任務，並用 Graphite 做 AI code review。
+- 流程：每個任務建一個分支 → 1-shot 提示完成 → 人工逐行 review → 開 PR → 用 Graphite Diamond 產生 AI review。
+- 交付：writeup.md 記錄每個 PR 的 review 比較與心得。
+
 ## Get Started with Graphite
 1. Sign up for Graphite: https://app.graphite.dev/signup
 2. Upon sign up, you can claim your 30-day free trial.
@@ -53,3 +58,21 @@ In your `writeup.md`, we are looking for the follwoing:
 1. Make sure you have all changes pushed to your remote repository for grading.
 2. Make sure you've added both brentju and febielin as collaborators on your assignment repository.
 2. Submit via Gradescope. 
+
+---
+
+## 中文註解（詳細版）
+### 本週目標
+在較完整的 codebase 上進行 AI 輔助開發與 code review，比較你的人工 review 與 Graphite AI review 的差異。
+
+### 任務流程（每個 TASK）
+1. 為每個任務建立獨立分支。
+2. 使用 AI 工具以 1-shot 提示完成。
+3. 自己逐行 review，修正問題，並加上清楚 commit 訊息。
+4. 開 PR，附上問題/解法、測試結果、tradeoff。
+5. 用 Graphite Diamond 產生 AI review。
+6. 把結果記錄在 writeup.md。
+
+### 交付內容
+- 4 個 PR（每個任務一個），含描述、測試、review。
+- writeup.md：人工與 AI review 比較與反思。

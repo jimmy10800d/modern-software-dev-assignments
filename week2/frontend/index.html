@@ -1,74 +1,74 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Action Item Extractor</title>
-    <style>
-      body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif; margin: 2rem auto; max-width: 800px; padding: 0 1rem; }
-      h1 { font-size: 1.5rem; }
-      textarea { width: 100%; min-height: 160px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, monospace; }
-      button { padding: 0.5rem 1rem; }
-      .items { margin-top: 1rem; }
-      .item { display: flex; align-items: center; gap: 0.5rem; padding: 0.25rem 0; }
-      .muted { color: #6b7280; font-size: 0.875rem; }
-      .row { display: flex; gap: 0.5rem; align-items: center; }
-    </style>
-  </head>
-  <body>
-    <h1>Action Item Extractor</h1>
-    <p class="muted">Paste notes and extract actionable items. Minimal raw HTML frontend.</p>
+<!doctype html> <!-- 文件型別宣告 -->
+<html lang="en"> <!-- HTML 根節點，語系為英文 -->
+  <head> <!-- 文件頭 -->
+    <meta charset="utf-8" /> <!-- 字元編碼 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" /> <!-- 行動裝置縮放設定 -->
+    <title>Action Item Extractor</title> <!-- 網頁標題 -->
+    <style> <!-- 內嵌 CSS -->
+      body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif; margin: 2rem auto; max-width: 800px; padding: 0 1rem; } <!-- 頁面字型與排版 -->
+      h1 { font-size: 1.5rem; } <!-- 標題大小 -->
+      textarea { width: 100%; min-height: 160px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, monospace; } <!-- 輸入框樣式 -->
+      button { padding: 0.5rem 1rem; } <!-- 按鈕內距 -->
+      .items { margin-top: 1rem; } <!-- 清單上方間距 -->
+      .item { display: flex; align-items: center; gap: 0.5rem; padding: 0.25rem 0; } <!-- 單一項目排列 -->
+      .muted { color: #6b7280; font-size: 0.875rem; } <!-- 淡色文字 -->
+      .row { display: flex; gap: 0.5rem; align-items: center; } <!-- 橫向排列 -->
+    </style> <!-- 結束 CSS -->
+  </head> <!-- 結束頭部 -->
+  <body> <!-- 內容區 -->
+    <h1>Action Item Extractor</h1> <!-- 主標題 -->
+    <p class="muted">Paste notes and extract actionable items. Minimal raw HTML frontend.</p> <!-- 說明文字 -->
 
-    <label for="text">Notes</label>
-    <textarea id="text" placeholder="Paste notes here...&#10;e.g.&#10;- [ ] Set up database&#10;- Implement extract endpoint"></textarea>
-    <div class="row">
-      <label class="row"><input id="save_note" type="checkbox" checked /> Save as note</label>
-      <button id="extract">Extract</button>
-    </div>
+    <label for="text">Notes</label> <!-- 輸入框標籤 -->
+    <textarea id="text" placeholder="Paste notes here...&#10;e.g.&#10;- [ ] Set up database&#10;- Implement extract endpoint"></textarea> <!-- 輸入框 -->
+    <div class="row"> <!-- 橫向容器 -->
+      <label class="row"><input id="save_note" type="checkbox" checked /> Save as note</label> <!-- 勾選儲存 -->
+      <button id="extract">Extract</button> <!-- 抽取按鈕 -->
+    </div> <!-- 結束橫向容器 -->
 
-    <div class="items" id="items"></div>
+    <div class="items" id="items"></div> <!-- 顯示結果區 -->
 
-    <script>
-      const $ = (sel) => document.querySelector(sel);
-      const itemsEl = $('#items');
-      const btn = $('#extract');
-      btn.addEventListener('click', async () => {
-        const text = $('#text').value;
-        const save = $('#save_note').checked;
-        itemsEl.textContent = 'Extracting...';
-        try {
-          const res = await fetch('/action-items/extract', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ text, save_note: save }),
-          });
-          if (!res.ok) throw new Error('Request failed');
-          const data = await res.json();
-          if (!data.items || data.items.length === 0) {
-            itemsEl.innerHTML = '<p class="muted">No action items found.</p>';
-            return;
+    <script> // JavaScript 程式開始
+      const $ = (sel) => document.querySelector(sel); // 簡化選擇器
+      const itemsEl = $('#items'); // 取得結果容器
+      const btn = $('#extract'); // 取得按鈕
+      btn.addEventListener('click', async () => { // 綁定點擊事件
+        const text = $('#text').value; // 取得輸入文字
+        const save = $('#save_note').checked; // 取得是否儲存
+        itemsEl.textContent = 'Extracting...'; // 顯示處理中
+        try { // 嘗試呼叫 API
+          const res = await fetch('/action-items/extract', { // 呼叫抽取 API
+            method: 'POST', // 使用 POST
+            headers: { 'Content-Type': 'application/json' }, // 設定 JSON
+            body: JSON.stringify({ text, save_note: save }), // 傳送內容
+          }); // 結束 fetch
+          if (!res.ok) throw new Error('Request failed'); // 錯誤處理
+          const data = await res.json(); // 解析 JSON
+          if (!data.items || data.items.length === 0) { // 若無結果
+            itemsEl.innerHTML = '<p class="muted">No action items found.</p>'; // 顯示提示
+            return; // 結束流程
           }
-          itemsEl.innerHTML = data.items.map(it => (
+          itemsEl.innerHTML = data.items.map(it => ( // 建立清單 HTML
             `<div class="item"><input type="checkbox" data-id="${it.id}" /> <span>${it.text}</span></div>`
-          )).join('');
-          itemsEl.querySelectorAll('input[type="checkbox"]').forEach(cb => {
-            cb.addEventListener('change', async (e) => {
-              const id = e.target.getAttribute('data-id');
-              await fetch(`/action-items/${id}/done`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ done: e.target.checked }),
-              });
-            });
-          });
-        } catch (err) {
-          console.error(err);
-          itemsEl.textContent = 'Error extracting items';
-        }
-      });
+          )).join(''); // 合併 HTML
+          itemsEl.querySelectorAll('input[type="checkbox"]').forEach(cb => { // 取得所有 checkbox
+            cb.addEventListener('change', async (e) => { // 綁定變更事件
+              const id = e.target.getAttribute('data-id'); // 取得 id
+              await fetch(`/action-items/${id}/done`, { // 呼叫更新 API
+                method: 'POST', // 使用 POST
+                headers: { 'Content-Type': 'application/json' }, // JSON 格式
+                body: JSON.stringify({ done: e.target.checked }), // 傳送完成狀態
+              }); // 結束 fetch
+            }); // 結束 change 事件
+          }); // 結束 checkbox 綁定
+        } catch (err) { // 捕捉錯誤
+          console.error(err); // 印出錯誤
+          itemsEl.textContent = 'Error extracting items'; // 顯示錯誤訊息
+        } // 結束 try/catch
+      }); // 結束 click 事件
 
-    </script>
-  </body>
-  </html>
+    </script> <!-- 結束 JavaScript -->
+  </body> <!-- 結束內容區 -->
+  </html> <!-- 結束 HTML -->
 
 

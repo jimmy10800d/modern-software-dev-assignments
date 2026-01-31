@@ -13,6 +13,11 @@ This week, your task is to build at least **2 automations** within the context o
 
 - MCP servers integrated into Claude Code
 
+## 中文註解（本週重點）
+- 目標：用 Claude Code 建立至少 2 個自動化流程（slash 指令、CLAUDE.md、SubAgents、MCP 任選）。
+- 實作：先完成自動化，再用它們擴充 week4/ 的 starter app。
+- 交付：writeup.md 記錄設計、操作步驟、輸出與如何用自動化改善專案。
+
 Your automations should meaningfully improve a developer workflow – for example, by streamlining tests, documentation, refactors, or data-related tasks. You will then use the automations you create to expand upon the starter application found in `week4/`.
 
 
@@ -154,6 +159,36 @@ e.g. If you implemented the custom slash command `/generate-test-cases`, explain
 1. Make sure you have all changes pushed to your remote repository for grading.
 2. **Make sure you've added both brentju and febielin as collaborators on your assignment repository.**
 2. Submit via Gradescope. 
+
+---
+
+## 中文註解（詳細版）
+### 本週目標
+用 Claude Code 的功能在本專案內建立至少 2 個自動化流程，並用這些自動化來擴充 week4/ 的 starter app。
+
+### 可以使用的自動化手段
+- Slash commands（`.claude/commands/*.md`）
+- `CLAUDE.md` 引導檔
+- SubAgents（多角色協作）
+- MCP server 整合
+
+### 快速啟動
+- 進入 `week4/` 目錄。
+- `make run` 開站。
+- `make test` 測試。
+- `make format` / `make lint` 格式化與檢查。
+
+### Part I：建立自動化（至少 2 個）
+- 參考範例：測試指令、文件同步、重構助手等。
+- 設計清楚的輸入輸出、步驟與安全性。
+- 在 `writeup.md` 中記錄設計與操作方式。
+
+### Part II：用自動化改善 app
+- 在 writeup 內描述你如何用自動化擴充或改進功能。
+
+### 交付與提交
+- 提交自動化實作與 `week4/writeup.md`。
+- 推送到遠端並加入指定協作者，最後 Gradescope 繳交。
 
 
 
