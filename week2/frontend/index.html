@@ -7,12 +7,18 @@
     <style> <!-- 內嵌 CSS -->
       body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif; margin: 2rem auto; max-width: 800px; padding: 0 1rem; } <!-- 頁面字型與排版 -->
       h1 { font-size: 1.5rem; } <!-- 標題大小 -->
+      h2 { font-size: 1.2rem; margin-top: 2rem; } <!-- 次標題樣式 -->
       textarea { width: 100%; min-height: 160px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, monospace; } <!-- 輸入框樣式 -->
-      button { padding: 0.5rem 1rem; } <!-- 按鈕內距 -->
+      button { padding: 0.5rem 1rem; cursor: pointer; } <!-- 按鈕內距與游標 -->
+      button.primary { background: #3b82f6; color: white; border: none; border-radius: 4px; } <!-- 主要按鈕樣式 -->
+      button.secondary { background: #6b7280; color: white; border: none; border-radius: 4px; } <!-- 次要按鈕樣式 -->
       .items { margin-top: 1rem; } <!-- 清單上方間距 -->
       .item { display: flex; align-items: center; gap: 0.5rem; padding: 0.25rem 0; } <!-- 單一項目排列 -->
       .muted { color: #6b7280; font-size: 0.875rem; } <!-- 淡色文字 -->
-      .row { display: flex; gap: 0.5rem; align-items: center; } <!-- 橫向排列 -->
+      .row { display: flex; gap: 0.5rem; align-items: center; margin-top: 0.5rem; } <!-- 橫向排列 -->
+      .notes-list { margin-top: 1rem; } <!-- 筆記列表樣式 -->
+      .note-item { padding: 0.5rem; border: 1px solid #e5e7eb; border-radius: 4px; margin-bottom: 0.5rem; } <!-- 單一筆記樣式 -->
+      .note-item .date { font-size: 0.75rem; color: #9ca3af; } <!-- 日期樣式 -->
     </style> <!-- 結束 CSS -->
   </head> <!-- 結束頭部 -->
   <body> <!-- 內容區 -->
@@ -23,24 +29,51 @@
     <textarea id="text" placeholder="Paste notes here...&#10;e.g.&#10;- [ ] Set up database&#10;- Implement extract endpoint"></textarea> <!-- 輸入框 -->
     <div class="row"> <!-- 橫向容器 -->
       <label class="row"><input id="save_note" type="checkbox" checked /> Save as note</label> <!-- 勾選儲存 -->
-      <button id="extract">Extract</button> <!-- 抽取按鈕 -->
+      <button id="extract" class="primary">Extract (Rules)</button> <!-- 規則抽取按鈕 -->
+      <button id="extract-llm" class="primary">Extract (LLM)</button> <!-- TODO 4: LLM 抽取按鈕 -->
+      <button id="list-notes" class="secondary">List Notes</button> <!-- TODO 4: 列出筆記按鈕 -->
     </div> <!-- 結束橫向容器 -->
 
     <div class="items" id="items"></div> <!-- 顯示結果區 -->
 
+    <!-- TODO 4: 筆記列表區域 -->
+    <div id="notes-section" style="display: none;">
+      <h2>Saved Notes</h2>
+      <div class="notes-list" id="notes-list"></div>
+    </div>
+
     <script> // JavaScript 程式開始
       const $ = (sel) => document.querySelector(sel); // 簡化選擇器
       const itemsEl = $('#items'); // 取得結果容器
-      const btn = $('#extract'); // 取得按鈕
-      btn.addEventListener('click', async () => { // 綁定點擊事件
+      
+      // ========================================
+      // 規則式抽取（原有功能）
+      // ========================================
+      const extractBtn = $('#extract'); // 取得按鈕
+      extractBtn.addEventListener('click', async () => { // 綁定點擊事件
         const text = $('#text').value; // 取得輸入文字
         const save = $('#save_note').checked; // 取得是否儲存
+        await performExtract('/action-items/extract', { text, save_note: save }); // 呼叫抽取
+      }); // 結束 click 事件
+
+      // ========================================
+      // TODO 4: LLM 抽取按鈕
+      // ========================================
+      const extractLLMBtn = $('#extract-llm');
+      extractLLMBtn.addEventListener('click', async () => {
+        const text = $('#text').value;
+        const save = $('#save_note').checked;
+        await performExtract('/action-items/extract-llm', { text, save_note: save });
+      });
+
+      // 共用抽取函式
+      async function performExtract(endpoint, payload) {
         itemsEl.textContent = 'Extracting...'; // 顯示處理中
         try { // 嘗試呼叫 API
-          const res = await fetch('/action-items/extract', { // 呼叫抽取 API
+          const res = await fetch(endpoint, { // 呼叫抽取 API
             method: 'POST', // 使用 POST
             headers: { 'Content-Type': 'application/json' }, // 設定 JSON
-            body: JSON.stringify({ text, save_note: save }), // 傳送內容
+            body: JSON.stringify(payload), // 傳送內容
           }); // 結束 fetch
           if (!res.ok) throw new Error('Request failed'); // 錯誤處理
           const data = await res.json(); // 解析 JSON
@@ -65,10 +98,41 @@
           console.error(err); // 印出錯誤
           itemsEl.textContent = 'Error extracting items'; // 顯示錯誤訊息
         } // 結束 try/catch
-      }); // 結束 click 事件
+      }
+
+      // ========================================
+      // TODO 4: 列出筆記按鈕
+      // ========================================
+      const listNotesBtn = $('#list-notes');
+      const notesSection = $('#notes-section');
+      const notesList = $('#notes-list');
+
+      listNotesBtn.addEventListener('click', async () => {
+        try {
+          const res = await fetch('/notes');
+          if (!res.ok) throw new Error('Failed to fetch notes');
+          const data = await res.json();
+          
+          if (!data.notes || data.notes.length === 0) {
+            notesList.innerHTML = '<p class="muted">No notes saved yet.</p>';
+          } else {
+            notesList.innerHTML = data.notes.map(note => (
+              `<div class="note-item">
+                <div class="date">${note.created_at} (ID: ${note.id})</div>
+                <div>${note.content.substring(0, 200)}${note.content.length > 200 ? '...' : ''}</div>
+              </div>`
+            )).join('');
+          }
+          notesSection.style.display = 'block';
+        } catch (err) {
+          console.error(err);
+          notesList.textContent = 'Error loading notes';
+          notesSection.style.display = 'block';
+        }
+      });
 
     </script> <!-- 結束 JavaScript -->
   </body> <!-- 結束內容區 -->
-  </html> <!-- 結束 HTML -->
+</html> <!-- 結束 HTML -->
 
 

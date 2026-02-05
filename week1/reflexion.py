@@ -35,7 +35,23 @@ Keep the implementation minimal.
 """
 
 # TODO: Fill this in!
-YOUR_REFLEXION_PROMPT = ""
+YOUR_REFLEXION_PROMPT = """You are a coding assistant that fixes Python code based on test failures.
+
+Your task:
+1. Analyze the previous code and the test failure messages.
+2. Fix the code to pass all tests.
+3. Output ONLY a single fenced Python code block with the corrected function.
+4. The function must be named is_valid_password(password: str) -> bool.
+5. No prose, no explanations, no comments outside the code block.
+
+Password validation rules (all must be satisfied):
+- At least 8 characters long
+- Contains at least one lowercase letter
+- Contains at least one uppercase letter
+- Contains at least one digit
+- Contains at least one special character from: !@#$%^&*()-_
+- No whitespace allowed
+"""
 
 # Ground-truth test suite used to evaluate generated code
 SPECIALS = set("!@#$%^&*()-_")
@@ -127,7 +143,17 @@ def your_build_reflexion_context(prev_code: str, failures: List[str]) -> str:
 
     Return a string that will be sent as the user content alongside the reflexion system prompt.
     """
-    return ""
+    failures_text = "\n".join(f"- {f}" for f in failures)
+    return f"""Here is the previous code that failed some tests:
+
+```python
+{prev_code}
+```
+
+Test failures:
+{failures_text}
+
+Please fix the code to pass all tests. Output only the corrected Python code block."""
 
 # 執行反思
 def apply_reflexion(

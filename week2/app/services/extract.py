@@ -87,3 +87,93 @@ def _looks_imperative(sentence: str) -> bool:  # 判斷是否祈使句
         "investigate",
     }
     return first.lower() in imperative_starters  # 判斷是否命中
+
+
+# ============================================================================
+# TODO 1: LLM-powered action item extraction
+# ============================================================================
+
+def extract_action_items_llm(
+    text: str,
+    model: str = "llama3.1:8b",
+) -> List[str]:
+    """
+    使用 LLM（透過 Ollama）從文字中抽取行動項目。
+    
+    Args:
+        text: 輸入的筆記文字
+        model: Ollama 模型名稱，預設為 llama3.1:8b
+        
+    Returns:
+        行動項目的字串清單
+    """
+    # 若輸入為空或只有空白，直接回傳空清單
+    if not text or not text.strip():
+        return []
+    
+    # 系統提示詞：指導 LLM 如何抽取行動項目
+    system_prompt = """You are an action item extractor. 
+Your task is to extract actionable tasks from the user's note.
+
+Rules:
+1. Return ONLY a valid JSON array of strings.
+2. Each string should be a single action item.
+3. Do not include any explanation or additional text.
+4. If there are no action items, return an empty array: []
+5. Keep action items concise and actionable.
+
+Example input:
+"Meeting notes: We need to fix the login bug. Also, update the documentation and schedule a review meeting."
+
+Example output:
+["Fix the login bug", "Update the documentation", "Schedule a review meeting"]
+"""
+
+    try:
+        # 呼叫 Ollama 模型
+        response = chat(
+            model=model,
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": f"Extract action items from this note:\n\n{text}"},
+            ],
+            format="json",  # 要求 JSON 格式輸出
+            options={"temperature": 0.1},  # 低溫度確保穩定輸出
+        )
+        
+        # 取得回應內容
+        content = response.message.content.strip()
+        
+        # 解析 JSON
+        result = json.loads(content)
+        
+        # 確保結果是陣列
+        if isinstance(result, list):
+            # 確保每個元素都是字串
+            return [str(item).strip() for item in result if item]
+        elif isinstance(result, dict):
+            # 有時 LLM 會回傳 {"action_items": [...]} 格式
+            for key in ["action_items", "items", "tasks", "actions"]:
+                if key in result and isinstance(result[key], list):
+                    return [str(item).strip() for item in result[key] if item]
+        
+        # 若格式不符，回傳空清單
+        return []
+        
+    except json.JSONDecodeError:
+        # JSON 解析失敗，嘗試用 regex 抽取
+        # 尋找類似 ["item1", "item2"] 的模式
+        match = re.search(r'\[.*?\]', content, re.DOTALL)
+        if match:
+            try:
+                result = json.loads(match.group())
+                if isinstance(result, list):
+                    return [str(item).strip() for item in result if item]
+            except json.JSONDecodeError:
+                pass
+        return []
+        
+    except Exception as e:
+        # 其他錯誤，印出警告並回傳空清單
+        print(f"Warning: LLM extraction failed: {e}")
+        return []
